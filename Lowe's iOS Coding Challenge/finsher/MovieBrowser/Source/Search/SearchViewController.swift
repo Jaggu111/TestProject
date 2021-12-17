@@ -14,28 +14,19 @@ class SearchViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     var movies: [Movie] = []
-    let searchController = UISearchController(searchResultsController: nil)
-    var filteredMovies: [Movie] = []
     var imageBaseURL = ""
-
-    var isSearchBarEmpty: Bool {
-        return searchController.searchBar.text?.isEmpty ?? true
-    }
-
-    var isFiltering: Bool {
-        return searchController.isActive && (!isSearchBarEmpty)
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        self.navigationController?.navigationBar.backgroundColor = .systemBlue
+        self.navigationController?.navigationBar.barTintColor = .systemBlue
+        let textAttributes = [NSAttributedString.Key.foregroundColor:UIColor.white]
+        navigationController?.navigationBar.titleTextAttributes = textAttributes
         // TODO: to figure out how to do add default movie list
         movies = []
         // To fetch base url before will help us load image view
         fetchConfiguration()
-
-        let navBar = UINavigationBar(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 88))
-        navBar.backgroundColor = .systemBlue
-        view.addSubview(navBar)
 
         searchBar.barStyle = .default
         searchBar.tintColor = .systemBlue
@@ -70,11 +61,8 @@ class SearchViewController: UIViewController {
         }
 
         let movie: Movie
-        if isFiltering {
-            movie = filteredMovies[indexPath.row]
-        } else {
-            movie = movies[indexPath.row]
-        }
+        movie = movies[indexPath.row]
+
         detailViewController.baseURL = self.imageBaseURL
         detailViewController.movie = movie
     }
@@ -103,7 +91,7 @@ class SearchViewController: UIViewController {
     }
 
     func filterContentForSearchText(_ searchText: String) {
-        filteredMovies = movies.filter { (movie: Movie) -> Bool in
+        movies = movies.filter { (movie: Movie) -> Bool in
             return movie.title.lowercased().contains(searchText.lowercased())
         }
 
@@ -151,20 +139,15 @@ class SearchViewController: UIViewController {
 extension SearchViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
-        if isFiltering {
-            return filteredMovies.count
-        }
         return movies.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! MovieTableViewCell
         let movie: Movie
-        if isFiltering {
-            movie = filteredMovies[indexPath.row]
-        } else {
-            movie = movies[indexPath.row]
-        }
+
+        movie = movies[indexPath.row]
+
         cell.movieTitle.text = movie.title
         cell.movieDate.text = movie.release_date
         cell.movieRating.text = "\(movie.vote_average)"

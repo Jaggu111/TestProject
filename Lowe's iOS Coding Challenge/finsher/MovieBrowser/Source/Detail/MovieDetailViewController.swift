@@ -27,9 +27,7 @@ class MovieDetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let navBar = UINavigationBar(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 88))
-        navBar.backgroundColor = .systemBlue
-        view.addSubview(navBar)
+        self.navigationController?.navigationBar.tintColor = .white
         configureView()
     }
 
